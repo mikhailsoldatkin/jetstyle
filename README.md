@@ -5,7 +5,7 @@
  docker compose up -d
 ```
 
-#### 3. Провести миграции:
+#### 3. Провести миграции в терминале контейнера jetstyle_app:
 
 ```
 python manage.py migrate
