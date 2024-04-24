@@ -1,0 +1,48 @@
+name: "jetstyle"
+
+services:
+  db:
+    image: postgres:latest
+    container_name: "${COMPOSE_PROJECT_NAME}_db"
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - ${PGDATA_DIR}:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: always
+
+  app:
+    build: .
+    container_name: "${COMPOSE_PROJECT_NAME}_app"
+    volumes:
+      - ./:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - rabbitmq
+      - celery
+    restart: always
+
+  celery:
+    build: .
+    container_name: "${COMPOSE_PROJECT_NAME}_celery"
+    command: celery -A ${COMPOSE_PROJECT_NAME} worker -l info --concurrency 4
+    depends_on:
+      - rabbitmq
+    restart: always
+
+  rabbitmq:
+    container_name: "${COMPOSE_PROJECT_NAME}_rabbitmq"
+    image: rabbitmq:latest
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+    restart: always
+
+volumes:
+  pgdata:
+    driver: local

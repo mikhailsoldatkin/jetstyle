@@ -1,0 +1,9 @@
+.git*
+.idea/
+.vscode/
+
+__pycache__/
+pgdata/
+venv/
+
+README.md
