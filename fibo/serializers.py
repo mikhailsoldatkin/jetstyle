@@ -1,4 +1,5 @@
 from celery.result import AsyncResult
+from celery.states import SUCCESS
 from rest_framework import serializers
 
 from fibo.models import FibonacciTask
@@ -46,7 +47,7 @@ class FibonacciTaskSerializer(serializers.ModelSerializer):
         fibo_task = FibonacciTask.objects.get(uuid=obj.uuid)
         task = AsyncResult(obj.uuid)
 
-        if task.status == FibonacciTask.SUCCESS:
+        if task.status == SUCCESS:
             result = task.get()
             fibo_task.result = result
             fibo_task.save()
